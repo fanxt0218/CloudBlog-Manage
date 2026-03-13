@@ -57,6 +57,18 @@ const routes: Array<RouteRecordRaw> = [
                 name: 'Review',
                 component: () => import('@/views/content/review/index.vue'),
                 meta: { title: '内容审核' }
+            },
+            {
+                path: 'tags',
+                name: 'Tags',
+                component: () => import('@/views/content/tags/index.vue'),
+                meta: { title: '标签管理' }
+            },
+            {
+                path: 'topic',
+                name: 'Topic',
+                component: () => import('@/views/content/topics/index.vue'),
+                meta: { title: '话题管理' }
             }
         ]
     },

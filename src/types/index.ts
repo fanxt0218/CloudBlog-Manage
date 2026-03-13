@@ -90,9 +90,63 @@ export interface Dynamics {
  */
 export interface TopicItem {
     id: number,
-    topicName: string
+    topicName: string,
+    image: string,
+    description: string,
+    status: number
 }
 
 export type Topics = TopicItem[]
+
+/**
+ * 标签分类
+ */
+export interface TagClassItem {
+    id: number,
+    className: string,
+    description: string,
+    status: number
+}
+
+export type TagClassList = TagClassItem[]
+
+/**
+ * 标签
+ */
+export interface TagItem {
+    id: number,
+    tagName: string,
+    classId: number,
+    description: string,
+    createTime: string,
+    updateTime: string,
+    status: number
+}
+
+export type TagList = TagItem[]
+
+/**
+ * 用户信息
+ */
+export interface UserInfo {
+    userId: number,
+    account: string,
+    userName: string,
+    sex: number,
+    image: string,
+    phone: string,
+    email: string,
+    status: number,
+    introduction: string,
+    region: string,
+    birthday: string,
+    profession: string,
+    vip: number,
+    lastLoginTime: string,
+    createTime: string,
+    updateTime: string
+}
+
+export type UserList = PageResponse<UserInfo>
 
 

@@ -238,6 +238,7 @@ const handleDelete = (row: TopicItem) => {
 
 onMounted(() => {
   fetchData()
+  document.title = '话题管理 - CloudBlog管理后台'
 })
 </script>
 

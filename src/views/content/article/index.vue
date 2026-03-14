@@ -194,6 +194,7 @@ const handleDelete = (row: ContentItem) => {
 
 onMounted(() => {
   fetchData()
+  document.title = '文章管理 - CloudBlog管理后台'
 })
 </script>
 

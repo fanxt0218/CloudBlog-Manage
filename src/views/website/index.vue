@@ -6,6 +6,11 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  document.title = '网站管理 - CloudBlog管理后台'
+})
 </script>
 
 <style scoped>

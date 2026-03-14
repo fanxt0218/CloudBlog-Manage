@@ -8,6 +8,11 @@
 
 <script setup lang="ts">
 import LoginCard from '@/components/loginPage/loginCard.vue'
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  document.title = '登录 - CloudBlog管理后台'
+})
 </script>
 
 <style scoped>

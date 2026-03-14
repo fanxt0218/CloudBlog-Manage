@@ -456,6 +456,7 @@ const handleResetPwd = (row: UserInfo) => {
 
 onMounted(() => {
   fetchData()
+  document.title = '用户管理 - CloudBlog管理后台'
 })
 </script>
 

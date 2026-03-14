@@ -228,6 +228,7 @@ const submitReject = async () => {
 
 onMounted(() => {
   fetchData()
+  document.title = '内容审核 - CloudBlog管理后台'
 })
 </script>
 

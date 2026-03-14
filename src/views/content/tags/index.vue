@@ -333,6 +333,7 @@ const handleDeleteTag = (row: TagItem) => {
 
 onMounted(() => {
   fetchClassList()
+  document.title = '标签管理 - CloudBlog管理后台'
 })
 </script>
 

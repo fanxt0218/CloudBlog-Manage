@@ -213,6 +213,7 @@ const handleDelete = (row: DynamicItem) => {
 onMounted(() => {
   fetchTopics()
   fetchData()
+  document.title = '动态管理 - CloudBlog管理后台'
 })
 </script>
 

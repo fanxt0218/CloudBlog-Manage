@@ -300,6 +300,7 @@ const getStatusTag = (status: number | string) => {
 
 onMounted(() => {
   fetchData()
+  document.title = '工单管理 - CloudBlog管理后台'
 })
 </script>
 

@@ -149,4 +149,46 @@ export interface UserInfo {
 
 export type UserList = PageResponse<UserInfo>
 
+/**
+ * 工单列表
+ */
+export interface WorkOrderListItem {
+    id: number,
+    orderId: string,
+    userId: number,
+    userName: string,
+    targetId: number,
+    targetType: number,
+    orderType: number,
+    reason: string,
+    filePath: string,
+    status: number,
+    createTime: string,
+    updateTime: string,
+    handleReason: string
+}
 
+export type WorkOrderList = PageResponse<WorkOrderListItem>
+
+/**
+ * 内容详情
+ */
+export interface ContentDetail {
+    authorId: number,
+    title: string,
+    introduction: string,
+    image: string,
+    createTime: string
+}
+
+/**
+ * 动态详情
+ */
+export interface ShareDetail {
+    authorId: number,
+    userName: string,
+    userImage: string,
+    createTime: string,
+    imageUrl: string,
+    videoUrl: string
+}

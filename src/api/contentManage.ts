@@ -218,3 +218,23 @@ export const uploadImage = (formData: FormData) => {
 export const deleteTopic = (id: number, currentData: { topicName: string, image: string, description: string }) => {
     return editTopic({ ...currentData, id, status: 1 })
 }
+
+/**
+ * 获取内容详情
+ */
+export const getContentDetail = (params: {
+    postId: number,
+    userId?: number
+}) => {
+    return request.get(`/content/post/getPost`, { params })
+}
+
+/**
+ * 获取动态详情
+ */
+export const getShareDetail = (params: {
+    shareId: number,
+    userId?: number
+}) => {
+    return request.get(`/content/share/getShare`, { params })
+}

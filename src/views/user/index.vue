@@ -24,7 +24,9 @@
           <el-form-item label="状态">
             <el-select v-model="queryParams.status" placeholder="状态" clearable style="width: 100px">
               <el-option label="正常" :value="0" />
-              <el-option label="失效" :value="1" />
+              <el-option label="锁定" :value="1" />
+              <el-option label="删除" :value="2" />
+              <el-option label="失效" :value="3" />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -53,10 +55,10 @@
           </template>
         </el-table-column>
         <el-table-column prop="region" label="地区" show-overflow-tooltip />
-        <el-table-column label="状态" width="80" align="center">
+        <el-table-column label="状态" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.status === 0 ? 'success' : 'danger'" size="small">
-              {{ row.status === 0 ? '正常' : '失效' }}
+            <el-tag :type="getStatusType(row.status)" size="small">
+              {{ getStatusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -64,16 +66,23 @@
         
         <el-table-column label="操作" width="220" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button type="warning" link size="small" @click="handleResetPwd(row)">重置密码</el-button>
-            <el-button 
-              :type="row.status === 0 ? 'danger' : 'success'" 
-              link 
-              size="small" 
-              @click="handleToggleStatus(row)"
-            >
-              {{ row.status === 0 ? '禁用' : '启用' }}
-            </el-button>
+            <div class="operation-buttons">
+              <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
+              <el-button type="warning" link size="small" @click="handleResetPwd(row)">重置密码</el-button>
+              <el-dropdown @command="(status: number) => handleStatusChange(row, status)" trigger="click">
+                <el-button type="success" link size="small" class="status-btn">
+                  状态修改<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item :command="0" :disabled="row.status === 0">设为正常</el-dropdown-item>
+                    <el-dropdown-item :command="1" :disabled="row.status === 1">设为锁定</el-dropdown-item>
+                    <el-dropdown-item :command="2" :disabled="row.status === 2">设为删除</el-dropdown-item>
+                    <el-dropdown-item :command="3" :disabled="row.status === 3">设为失效</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -175,7 +184,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { Plus, Search, Refresh } from '@element-plus/icons-vue'
+import { Plus, Search, Refresh, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox, type FormInstance, type UploadFile } from 'element-plus'
 import { regionData as chinaRegionData, codeToText } from 'element-china-area-data'
 import { getUserList, resetPassword, disableUser, updateUser, uploadAvatar, register } from '@/api/userManage'
@@ -415,21 +424,41 @@ const submitEdit = async () => {
 }
 
 // ---------------- 状态切换与重置密码 ----------------
-const handleToggleStatus = (row: UserInfo) => {
-  const isDisable = row.status === 0
-  const actionText = isDisable ? '禁用' : '启用'
-  const targetStatus = isDisable ? 1 : 0
+const getStatusType = (status: number) => {
+  switch (status) {
+    case 0: return 'success'
+    case 1: return 'warning'
+    case 2: return 'info'
+    case 3: return 'danger'
+    default: return ''
+  }
+}
+
+const getStatusLabel = (status: number) => {
+  const labels: Record<number, string> = {
+    0: '正常',
+    1: '锁定',
+    2: '删除',
+    3: '失效'
+  }
+  return labels[status] || '未知'
+}
+
+const handleStatusChange = (row: UserInfo, targetStatus: number) => {
+  const actionText = getStatusLabel(targetStatus)
   
-  ElMessageBox.confirm(`确认${actionText}用户 "${row.userName || row.account}" 吗？`, '警告', {
+  ElMessageBox.confirm(`确认将用户 "${row.userName || row.account}" 的状态修改为 [${actionText}] 吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
     try {
       const res: any = await disableUser({ targetId: row.userId, status: targetStatus })
       if (res.data?.code === 200 || res.code === 200) {
-        ElMessage.success(`${actionText}成功`)
+        ElMessage.success(`已成功修改为${actionText}`)
         fetchData()
       } else {
-        ElMessage.error(res.data?.msg || res.msg || `${actionText}失败`)
+        ElMessage.error(res.data?.msg || res.msg || `修改失败`)
       }
     } catch (error) {
       ElMessage.error('操作异常')
@@ -495,6 +524,17 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.operation-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0px; /* el-button already has some margin if they are siblings, but flex gap is cleaner */
+}
+
+.operation-buttons :deep(.el-dropdown) {
+  vertical-align: middle;
 }
 
 .add-tip {

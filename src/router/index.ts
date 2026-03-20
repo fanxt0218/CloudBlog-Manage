@@ -95,6 +95,30 @@ const routes: Array<RouteRecordRaw> = [
                 meta: { title: '工单管理', icon: 'Tickets' }
             }
         ]
+    },
+    {
+        path: '/es',
+        component: Layout,
+        children: [
+            {
+                path: 'index',
+                name: 'ESManage',
+                component: () => import('@/views/es/index.vue'),
+                meta: { title: '搜索引擎管理', icon: 'Search' }
+            }
+        ]
+    },
+    {
+        path: '/redis',
+        component: Layout,
+        children: [
+            {
+                path: 'index',
+                name: 'RedisManage',
+                component: () => import('@/views/redis/index.vue'),
+                meta: { title: '缓存管理', icon: 'Brush' }
+            }
+        ]
     }
 ]
 

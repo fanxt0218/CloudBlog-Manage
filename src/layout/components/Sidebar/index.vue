@@ -34,13 +34,21 @@
       <el-icon><Tickets /></el-icon>
       <span>工单管理</span>
     </el-menu-item>
+    <el-menu-item index="/es/index">
+      <el-icon><Search /></el-icon>
+      <span>搜索引擎管理</span>
+    </el-menu-item>
+    <el-menu-item index="/redis/index">
+      <el-icon><Brush /></el-icon>
+      <span>缓存管理</span>
+    </el-menu-item>
   </el-menu>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { House, Setting, Document, User, Tickets } from '@element-plus/icons-vue'
+import { House, Setting, Document, User, Tickets, Search, Brush } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const activePath = computed(() => {

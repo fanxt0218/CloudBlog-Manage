@@ -192,3 +192,47 @@ export interface ShareDetail {
     imageUrl: string,
     videoUrl: string
 }
+
+/**
+ * 用户统计数据
+ */
+export interface UserStatistic {
+    totalUser: number,
+    onlineUser: number
+}
+
+/**
+ * 平台热门文章
+ */
+export interface PlatformHotArticleItem {
+    articleId: number,
+    title: string,
+    introduction: string,
+    image: string,
+    authorId: number,
+    authorName: string,
+    browseCount: number,
+    likeCount: number,
+    collectCount: number,
+    commentCount: number,
+    totalScore: number
+}
+
+/**
+ * 用户信息
+ */
+export interface UserInfo {
+    userName: string,
+    image: string,
+    region: string,
+    joinTime: string,
+    introduction: string,
+    visits: number,
+    postCount: number,
+    fanCount: number,
+    blogAge: number,
+    exp: number,
+    level: number,
+    focusCount: number,
+    isVip: number
+}

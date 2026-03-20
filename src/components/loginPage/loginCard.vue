@@ -4,7 +4,7 @@
       <!-- 左侧介绍区 -->
       <div class="intro-section">
         <div class="brand">
-          <img src="../../assets/logo-icon.png" class="logo-icon" alt="Logo">
+          <img src="../../assets/manage-login-logo.png" class="logo-icon" alt="Logo">
           <svg class="logo-svg-login" viewBox="0 0 160 40">
             <text x="0" y="30" class="logo-text cloud-login">Cloud</text>
             <text x="88" y="30" class="logo-text blog-login">Blog</text>

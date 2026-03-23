@@ -119,6 +119,19 @@ const routes: Array<RouteRecordRaw> = [
                 meta: { title: '缓存管理', icon: 'Brush' }
             }
         ]
+    },
+    {
+        path: '/agent',
+        component: Layout,
+        meta: { title: '智能体管理', icon: 'Cpu' },
+        children: [
+            {
+                path: 'rag',
+                name: 'RAGManage',
+                component: () => import('@/views/agent/rag/index.vue'),
+                meta: { title: 'RAG管理' }
+            }
+        ]
     }
 ]
 

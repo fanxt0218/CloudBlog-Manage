@@ -184,7 +184,8 @@ const formatOrderType = (type: number | string) => {
   const map: Record<string, string> = {
     '0': '内容举报',
     '1': 'BUG',
-    '2': '建议'
+    '2': '建议',
+    '3': '忘记密码'
   }
   return map[String(type)] || '未知'
 }

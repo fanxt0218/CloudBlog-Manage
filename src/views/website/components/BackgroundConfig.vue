@@ -59,8 +59,9 @@
 
       <!-- 预览页背景组 -->
       <div class="config-group">
-        <h4 class="group-title"><el-icon><View /></el-icon> 内容预览页面</h4>
+        <h4 class="group-title"><el-icon><View /></el-icon> 门户内容预览</h4>
         <div class="mock-grid single">
+          <!-- 文章预览 -->
           <div class="mock-card wide" @click="handleEdit('VIEW', 'viewpage_bg', '文章预览页背景')">
             <div class="mock-screen">
               <div class="mock-bg" :style="{ backgroundImage: `url(${getPreviewUrl(bgData['viewpage_bg'] || '')})` }"></div>
@@ -68,7 +69,6 @@
                 <div class="article-mock">
                   <div class="article-title"></div>
                   <div class="article-meta"></div>
-                  <div class="article-para"></div>
                   <div class="article-para"></div>
                 </div>
               </div>
@@ -312,6 +312,14 @@ onMounted(fetchBgData);
   .article-title { height: 8px; background: #303133; border-radius: 4px; width: 70%; }
   .article-meta { height: 4px; background: #c0c4cc; border-radius: 2px; width: 40%; }
   .article-para { height: 4px; background: #f0f2f5; border-radius: 2px; }
+}
+
+/* 模拟个人中心 */
+.personal-view {
+  display: none;
+}
+.profile-view {
+  display: none;
 }
 
 .mock-info {

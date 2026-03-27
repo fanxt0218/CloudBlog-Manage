@@ -18,7 +18,7 @@
 
     <el-divider />
 
-    <!-- 其他页面配置 Section (保持现状作为占位) -->
+    <!-- 视觉与页面配置 Section -->
     <section class="config-section">
       <div class="section-header">
         <span class="dot purple"></span>
@@ -30,7 +30,14 @@
             <el-row>
               <el-col :md="12">
                 <div class="preview-wrapper">
-                  <el-image :src="item.preview" fit="cover" class="preview-img" />
+                  <el-image :src="getResourceUrl(item.preview)" fit="cover" class="preview-img">
+                    <template #error>
+                      <div class="image-slot">
+                        <el-icon><Picture /></el-icon>
+                        <span>暂未配置封面</span>
+                      </div>
+                    </template>
+                  </el-image>
                 </div>
               </el-col>
               <el-col :md="12">
@@ -40,8 +47,10 @@
                     <p class="desc">{{ item.desc }}</p>
                   </div>
                   <div class="card-footer">
-                    <el-tag type="warning" size="small">实时预览已开启</el-tag>
-                    <el-button link type="primary" :icon="ArrowRight">立即配置</el-button>
+                    <el-tag :type="item.preview ? 'success' : 'info'" size="small">
+                      {{ item.preview ? '实时预览已开启' : '待配置' }}
+                    </el-tag>
+                    <el-button link type="primary" :icon="ArrowRight" @click="handleConfig(item)">立即配置</el-button>
                   </div>
                 </div>
               </el-col>
@@ -51,9 +60,19 @@
       </el-row>
     </section>
 
+    <!-- 配置详情对话框 -->
+    <ConfigDetailDialog 
+      v-if="dialogVisible"
+      v-model="dialogVisible"
+      :config-category="activeConfig.category"
+      :config-type="activeConfig.type"
+      :config-title="activeConfig.title"
+      @refresh="loadOtherConfigs"
+    />
+
     <el-divider />
 
-    <!-- 背景图配置 -->
+    <!-- 背景图配置 (主要是登录与内容预览) -->
     <section class="config-section">
       <BackgroundConfig />
     </section>
@@ -65,38 +84,82 @@ import { onMounted, ref } from 'vue';
 import { 
   Setting, 
   Refresh, 
-  ArrowRight
+  ArrowRight,
+  Picture
 } from '@element-plus/icons-vue';
 import HomeConfig from './components/HomeConfig.vue';
 import BackgroundConfig from './components/BackgroundConfig.vue';
+import ConfigDetailDialog from './components/ConfigDetailDialog.vue';
+import { getWebsiteConfig } from '@/api/WebSiteManage';
 
 const homeConfigRef = ref();
-
-onMounted(() => {
-  document.title = '门户配置 - CloudBlog管理后台'
-})
-
-const handleRefresh = () => {
-  // 触发子组件刷新
-  if (homeConfigRef.value) {
-    // homeConfigRef.value.loadData(); // 如果子组件暴露了刷新方法
-  }
-};
+const dialogVisible = ref(false);
+const activeConfig = ref({ category: '', type: '', title: '' });
 
 const otherConfigs = ref([
   {
     id: 4,
-    title: '登录页视觉方案',
-    desc: '登录页的背景图片、遮罩色调以及对齐方式配置。可设置纯色、渐变或壁纸。',
-    preview: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2070',
+    title: '用户主页背景图',
+    desc: '用户主页的背景图片、遮罩色调以及对齐方式配置。可设置纯色、渐变或壁纸。',
+    preview: '',
+    category: 'USER',
+    type: 'profile_bg'
   },
   {
     id: 5,
-    title: '文章预览沉浸背景',
-    desc: '用户文章预览页或个人中心顶部的沉浸式背景图，提升阅读体验。',
-    preview: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=2128',
+    title: '个人中心背景',
+    desc: '个人中心页面的背景图。可设置纯色、渐变或壁纸。',
+    preview: '',
+    category: 'USER',
+    type: 'personal_bg'
   }
 ]);
+
+const getResourceUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `/api${url}`;
+};
+
+const handleConfig = (item: any) => {
+  activeConfig.value = { 
+    category: item.category, 
+    type: item.type, 
+    title: item.title 
+  };
+  dialogVisible.value = true;
+};
+
+const loadOtherConfigs = async () => {
+  for (const item of otherConfigs.value) {
+    try {
+      const res: any = await getWebsiteConfig({
+        category: item.category,
+        contentType: item.type
+      });
+      if (res.code === 200 && res.data && res.data.length > 0) {
+        item.preview = res.data[0].contentValue;
+      } else {
+        item.preview = '';
+      }
+    } catch (e) {
+      console.error(`Failed to load ${item.type}`, e);
+    }
+  }
+};
+
+onMounted(() => {
+  document.title = '门户配置 - CloudBlog管理后台'
+  loadOtherConfigs();
+})
+
+const handleRefresh = () => {
+  if (homeConfigRef.value) {
+    // 假设组件暴露了刷新方法
+    // homeConfigRef.value.loadData();
+  }
+  loadOtherConfigs();
+};
 </script>
 
 <style scoped lang="scss">

@@ -57,7 +57,7 @@ request.interceptors.response.use(
     } else if (error.code === 'ECONNABORTED') {
       console.error('请求超时');
     } else if (error.response && error.response.status === 401) {
-      console.error('未授权，会话已过期');
+      console.error('未授权，会话已过期err');
       const userInfoStore = useUserInfoStore();
       userInfoStore.logout();
       router.replace('/login')

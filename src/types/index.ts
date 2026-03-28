@@ -157,6 +157,7 @@ export interface WorkOrderListItem {
     orderId: string,
     userId: number,
     userName: string,
+    userAccount: string,
     targetId: number,
     targetType: number,
     orderType: number,
@@ -166,6 +167,18 @@ export interface WorkOrderListItem {
     createTime: string,
     updateTime: string,
     handleReason: string
+}
+
+/**
+ * 工单目标详情
+ */
+export interface WorkOrderTargetDetail {
+    orderId: string,
+    targetId: number,
+    mainInfo: string,
+    detail: string,
+    status: string,
+    createTime: string
 }
 
 export type WorkOrderList = PageResponse<WorkOrderListItem>

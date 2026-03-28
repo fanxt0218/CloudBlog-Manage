@@ -33,11 +33,11 @@
            <span class="view-hint">点击查看动态详情 -></span>
         </div>
         <div v-else-if="order.targetType === 3" class="card-inner clickable">
-           <h4>📌 举报违规用户 (ID: {{ order.targetId }})</h4>
+           <h4>📌 举报违规用户 (账号: {{ targetDetail?.mainInfo }})</h4>
            <span class="view-hint">点击查看用户主页 -></span>
         </div>
         <div v-else-if="order.targetType === 2" class="card-inner clickable">
-           <h4>📌 举报违规评论 (ID: {{ order.targetId }})</h4>
+           <h4>📌 举报违规评论 (内容: {{ targetDetail?.mainInfo }})</h4>
            <span class="view-hint">该类型暂不支持直接跳转</span>
         </div>
         <div v-else class="card-inner">
@@ -88,11 +88,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getContentDetail, getShareDetail } from '@/api/contentManage'
-import type { WorkOrderListItem, ContentDetail, ShareDetail } from '@/types/index'
+import type { WorkOrderListItem, ContentDetail, ShareDetail, WorkOrderTargetDetail } from '@/types/index'
 import { TimeUtil } from '@/utils/TimeUtil'
+import { getWorkOrderTargetDetail } from '@/api/workOrderManage'
 
 const VIEW_BASE_URL = 'http://localhost:5173'
 
@@ -106,6 +107,8 @@ const emit = defineEmits(['update:visible', 'process'])
 const targetArticleDetail = ref<ContentDetail | null>(null)
 const targetShareDetail = ref<ShareDetail | null>(null)
 const loadingDetail = ref(false)
+
+const targetDetail = ref<WorkOrderTargetDetail | null>(null)
 
 watch(() => props.visible, async (newVal) => {
   if (newVal && props.order) {
@@ -130,6 +133,8 @@ watch(() => props.visible, async (newVal) => {
         loadingDetail.value = false
       }
     }
+    // 查询工单目标详情
+    getWorkOrderTargetDetailInfo()
   }
 })
 
@@ -198,6 +203,21 @@ const formatStatus = (status: number | string) => {
   }
   return map[String(status)] || '未知'
 }
+
+/**
+ * 获取工单目标详情
+ */
+const getWorkOrderTargetDetailInfo = async () => {
+  if (props.order && (props.order.orderType === 0 || props.order.orderType === 1)) {
+    const res = await getWorkOrderTargetDetail({ targetId: props.order.targetId, targetType: props.order.targetType })
+    targetDetail.value = res.data?.data || res.data || res
+  }
+}
+
+onMounted(() => {
+  console.log('准备查询工单目标详情')
+  getWorkOrderTargetDetailInfo()
+})
 
 </script>
 

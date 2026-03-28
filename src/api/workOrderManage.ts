@@ -18,6 +18,16 @@ export function getWorkOrderList(params: {
 }
 
 /**
+ * 获取工单目标详情
+ */
+export function getWorkOrderTargetDetail(params: {
+    targetId: number,
+    targetType: number
+}) {
+    return request.post('/admin/workOrder/getWorkOrderDetail', params)
+}
+
+/**
  * 处理工单
  */
 export function handleWorkOrder(data: {

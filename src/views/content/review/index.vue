@@ -50,7 +50,9 @@
         </el-table-column>
         <el-table-column prop="title" label="标题" show-overflow-tooltip>
           <template #default="{ row }">
-            {{ row.title || '无标题' }}
+            <span class="click-title" @click="handleView(row)">
+              {{ row.title || '无标题' }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="authorName" label="作者" width="150" />
@@ -108,6 +110,8 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getPendingList, reviewContent } from '@/api/contentManage'
 import type { PendingContent } from '@/types/index'
+
+const VIEW_BASE_URL = 'http://localhost:5173' // 前台界面基础URL
 
 const activeTab = ref('0')
 const loading = ref(false)
@@ -226,6 +230,36 @@ const submitReject = async () => {
   }
 }
 
+/**
+ * 预览处理
+ */
+const handleView = (row: PendingContent) => {
+  if (queryParams.value.type === 0) {
+    handleViewPost(row)
+  } else {
+    handleDetail(row)
+  }
+}
+
+/**
+ * 预览文章
+ * @param row 
+ */
+const handleViewPost = (row: PendingContent) => {
+  // 预览：新窗口打开
+  const url = `${VIEW_BASE_URL}/postView/${row.authorId}/${row.contentId}`
+  window.open(url, '_blank')
+}
+
+/**
+ * 预览动态
+ */
+const handleDetail = (row: PendingContent) => {
+  // 详情：新窗口打开
+  const url = `${VIEW_BASE_URL}/shareView/${row.contentId}`
+  window.open(url, '_blank')
+}
+
 onMounted(() => {
   fetchData()
   document.title = '内容审核 - CloudBlog管理后台'
@@ -255,5 +289,16 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.click-title {
+  /* color: #409eff; */
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.click-title:hover {
+  color: #66b1ff;
+  /* text-decoration: underline; */
 }
 </style>

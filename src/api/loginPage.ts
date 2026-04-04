@@ -9,7 +9,7 @@ export const login = (
         target: string,
         password: string,
         twicePassword: string,
-        isAdmin: boolean
+        admin: boolean
     }
 ) => {
     return request.post(`/user/login`, data);

@@ -106,7 +106,7 @@ const loginForm = reactive({
   target: '',
   password: '',
   twicePassword: '',
-  isAdmin: true
+  admin: true
 })
 
 const rules = {

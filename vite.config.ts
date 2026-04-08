@@ -19,6 +19,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // 添加这行：允许外部访问
     port: 5174,      // 可选：明确指定端口
+    allowedHosts: ['www.cloudblog.com'],
     proxy: {
       '/api': {
         target: 'http://localhost:9090',

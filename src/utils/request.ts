@@ -6,7 +6,7 @@ import { useUserInfoStore } from '@/stores/userInfo';
 // 创建 axios 实例 - 修改 baseURL 为相对路径
 const request = axios.create({
   baseURL: '/api', // 使用相对路径，配合 Vite 代理
-  timeout: 10000, // 请求超时时间
+  timeout: 20000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json'
   }

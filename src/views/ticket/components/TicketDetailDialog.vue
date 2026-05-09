@@ -208,8 +208,8 @@ const formatStatus = (status: number | string) => {
  * 获取工单目标详情
  */
 const getWorkOrderTargetDetailInfo = async () => {
-  if (props.order && (props.order.orderType === 0 || props.order.orderType === 1)) {
-    const res = await getWorkOrderTargetDetail({ targetId: props.order.targetId, targetType: props.order.targetType })
+  if (props.order && (props.order.orderType === 0)) {
+    const res = await getWorkOrderTargetDetail({ orderId: props.order.orderId, targetId: props.order.targetId, targetType: props.order.targetType })
     targetDetail.value = res.data?.data || res.data || res
   }
 }

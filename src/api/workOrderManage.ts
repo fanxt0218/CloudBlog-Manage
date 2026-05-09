@@ -21,6 +21,7 @@ export function getWorkOrderList(params: {
  * 获取工单目标详情
  */
 export function getWorkOrderTargetDetail(params: {
+    orderId: string,
     targetId: number,
     targetType: number
 }) {

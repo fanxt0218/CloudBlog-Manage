@@ -69,6 +69,12 @@ const routes: Array<RouteRecordRaw> = [
                 name: 'Topic',
                 component: () => import('@/views/content/topics/index.vue'),
                 meta: { title: '话题管理' }
+            },
+            {
+                path: 'sensitive',
+                name: 'Sensitive',
+                component: () => import('@/views/content/sensitive/index.vue'),
+                meta: { title: '敏感词管理' }
             }
         ]
     },

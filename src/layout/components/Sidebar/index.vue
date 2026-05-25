@@ -25,6 +25,7 @@
       <el-menu-item index="/content/review">内容审核</el-menu-item>
       <el-menu-item index="/content/tags">标签管理</el-menu-item>
       <el-menu-item index="/content/topic">话题管理</el-menu-item>
+      <el-menu-item index="/content/sensitive">敏感词管理</el-menu-item>
     </el-sub-menu>
     <el-menu-item index="/user/index">
       <el-icon><User /></el-icon>

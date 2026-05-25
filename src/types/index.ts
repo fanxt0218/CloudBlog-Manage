@@ -19,7 +19,9 @@ export interface PendingContent {
     authorId: string,
     authorName: string,
     cover: string,
-    createTime: string
+    createTime: string,
+    pass_status?: number,
+    detection_result?: DetectionResult
 }
 
 export type PendingContents = PageResponse<PendingContent>
@@ -272,4 +274,43 @@ export interface WebsiteComponentDefine {
     updatedBy: string,
     createTime: string,
     updateTime: string
+}
+
+/**
+ * 敏感词列表
+ */
+export interface SensitiveWordItem {
+    id: number,
+    word: string,
+    description: string,
+    status: number,
+    createTime: string,
+    updateTime: string
+}
+
+export type SensitiveWordList = SensitiveWordItem[]
+
+/**
+ * 文章检测记录
+ */
+export interface ContentCheckRecord {
+    id: number,
+    postId: number,
+    detection_type: string,
+    detection_result: DetectionResult,
+    pass_status: number,
+    create_time: string
+}
+
+export interface DetectionResult {
+    checkId: string,
+    postId: number,
+    postName: string,
+    checkTime: string,
+    checkItems: CheckItem[]
+}
+
+export interface CheckItem {
+    itemName: string,
+    itemResult: string
 }

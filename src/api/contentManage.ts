@@ -238,3 +238,46 @@ export const getShareDetail = (params: {
 }) => {
     return request.get(`/content/share/getShare`, { params })
 }
+
+/**
+ * 获取敏感词列表
+ */
+export const getSensitiveWordList = () => {
+    return request.get('/admin/content/getSensitiveWords')
+}
+
+/**
+ * 添加敏感词
+ */
+export const addSensitiveWord = (data: {
+    word: string,
+    description: string
+}) => {
+    return request.post('/admin/content/addSensitiveWord', data)
+}
+
+/**
+ * 删除敏感词
+ */
+export const deleteSensitiveWord = (id: number) => {
+    return request.post(`/admin/content/deleteSensitiveWord`, {}, { params: { id } })
+}
+
+/**
+ * 更新敏感词
+ */
+export const updateSensitiveWord = (data: {
+    id: number,
+    word: string,
+    description: string,
+    status: number
+}) => {
+    return request.post(`/admin/content/editSensitiveWord`, data)
+}
+
+/**
+ * 获取文章检测结果
+ */
+export const getContentCheckResult = (id: number) => {
+    return request.get(`/admin/content/getCheckCompliance`, { params: { id } })
+}

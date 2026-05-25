@@ -33,7 +33,7 @@
     </el-tabs>
 
     <div class="table-container" v-loading="loading">
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :key="activeTab" :data="tableData" border style="width: 100%">
         <el-table-column prop="contentId" label="ID" width="80" />
         <el-table-column label="封面" width="120" align="center">
           <template #default="{ row }">
@@ -57,6 +57,26 @@
         </el-table-column>
         <el-table-column prop="authorName" label="作者" width="150" />
         <el-table-column prop="createTime" label="创建时间" width="180" />
+        <el-table-column label="自动检测建议" width="150" align="center" v-if="queryParams.type === 0">
+          <template #default="{ row }">
+            <div v-if="row.pass_status !== undefined && row.pass_status !== null">
+              <el-tag :type="row.pass_status === 1 ? 'success' : 'danger'" size="small">
+                {{ row.pass_status === 1 ? '通过' : '未通过' }}
+              </el-tag>
+              <el-button 
+                v-if="row.detection_result" 
+                type="primary" 
+                link 
+                size="small" 
+                style="margin-left: 8px;"
+                @click="openReportDialog(row.detection_result)"
+              >
+                检测报告
+              </el-button>
+            </div>
+            <span v-else style="color: #999; font-size: 12px">-</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="success" size="small" @click="handlePass(row)">通过</el-button>
@@ -102,14 +122,49 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 检测报告弹窗 -->
+    <el-dialog
+      v-model="reportDialogVisible"
+      title="自动检测报告"
+      width="600px"
+    >
+      <div v-if="currentReport" class="report-content">
+        <div class="report-header">
+          <div class="report-info-item">
+            <span class="label">检测编号：</span>
+            <span class="value">{{ currentReport.checkId }}</span>
+          </div>
+          <div class="report-info-item">
+            <span class="label">文章名称：</span>
+            <span class="value">{{ currentReport.postName }}</span>
+          </div>
+          <div class="report-info-item">
+            <span class="label">检测时间：</span>
+            <span class="value">{{ currentReport.checkTime }}</span>
+          </div>
+        </div>
+        
+        <el-divider>检测项</el-divider>
+        
+        <div class="check-items">
+          <div v-for="(item, index) in currentReport.checkItems" :key="index" class="check-item-card">
+            <div class="item-name">{{ item.itemName }}</div>
+            <div :class="['item-result', item.itemResult === '合规' ? 'result-pass' : 'result-fail']">
+              {{ item.itemResult }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getPendingList, reviewContent } from '@/api/contentManage'
-import type { PendingContent } from '@/types/index'
+import { getPendingList, reviewContent, getContentCheckResult } from '@/api/contentManage'
+import type { PendingContent, DetectionResult, ContentCheckRecord } from '@/types/index'
 
 const VIEW_BASE_URL = 'http://localhost:5173' // 前台界面基础URL
 
@@ -136,12 +191,46 @@ const rejectReason = ref('')
 const currentActionRow = ref<PendingContent | null>(null)
 const submitLoading = ref(false)
 
+const reportDialogVisible = ref(false)
+const currentReport = ref<DetectionResult | null>(null)
+
+const openReportDialog = (report: DetectionResult) => {
+  currentReport.value = report
+  reportDialogVisible.value = true
+}
+
 const fetchData = async () => {
   loading.value = true
   try {
     const res = await getPendingList(queryParams.value)
     const data = res.data?.data || res.data || res
-    tableData.value = data.records || []
+    
+    const records = data.records || []
+    
+    // 调用接口查询检测结果
+    await Promise.all(records.map(async (item: PendingContent) => {
+      try {
+        const checkRes: any = await getContentCheckResult(item.contentId)
+        const checkData = checkRes.data?.data || checkRes.data || checkRes
+        if (checkData && checkData.passStatus !== undefined) {
+          item.pass_status = checkData.passStatus
+          // 解析 detectionResult 字符串
+          if (typeof checkData.detectionResult === 'string') {
+            try {
+              item.detection_result = JSON.parse(checkData.detectionResult)
+            } catch (e) {
+              console.error('Failed to parse detectionResult', e)
+            }
+          } else {
+            item.detection_result = checkData.detectionResult
+          }
+        }
+      } catch (err) {
+        console.error(`获取内容 ${item.contentId} 的检测结果失败`, err)
+      }
+    }))
+    
+    tableData.value = records
     total.value = data.total || 0
   } catch (error) {
     ElMessage.error('获取列表失败')
@@ -300,5 +389,66 @@ onMounted(() => {
 .click-title:hover {
   color: #66b1ff;
   /* text-decoration: underline; */
+}
+
+/* 自动检测报告样式 */
+.report-content {
+  padding: 10px;
+}
+.report-header {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.report-info-item {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.report-info-item:last-child {
+  margin-bottom: 0;
+}
+.report-info-item .label {
+  color: #606266;
+  font-weight: bold;
+}
+.report-info-item .value {
+  color: #303133;
+}
+.check-items {
+  display: grid;
+  /* grid-template-columns: repeat(2, 1fr); */
+  gap: 15px;
+}
+.check-item-card {
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s;
+}
+.check-item-card:hover {
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05);
+}
+.item-name {
+  font-weight: bold;
+  color: #303133;
+}
+.item-result {
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.result-pass {
+  background-color: #f0f9eb;
+  color: #67c23a;
+  border: 1px solid #e1f3d8;
+}
+.result-fail {
+  background-color: #fef0f0;
+  color: #f56c6c;
+  border: 1px solid #fde2e2;
 }
 </style>
